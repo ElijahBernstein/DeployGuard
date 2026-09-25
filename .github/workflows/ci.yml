@@ -33,3 +33,32 @@ jobs:
 
       - name: Build Docker image
         run: docker build --tag deployguard:ci .
+
+
+  terraform:
+    name: Terraform checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository code
+        uses: actions/checkout@v7
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: "1.15.9"
+
+      - name: Check Terraform formatting
+        run: terraform -chdir=infra fmt -check -recursive
+
+      - name: Initialize main Terraform configuration
+        run: terraform -chdir=infra init -backend=false
+
+      - name: Validate main Terraform configuration
+        run: terraform -chdir=infra validate
+
+      - name: Initialize bootstrap Terraform configuration
+        run: terraform -chdir=infra/bootstrap init -backend=false
+
+      - name: Validate bootstrap Terraform configuration
+        run: terraform -chdir=infra/bootstrap validate

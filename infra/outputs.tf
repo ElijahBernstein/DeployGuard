@@ -2,3 +2,16 @@ output "ecr_repository_url" {
   description = "URL used to push and pull DeployGuard container images"
   value       = aws_ecr_repository.app.repository_url
 }
+
+output "vpc_id" {
+  description = "ID of the DeployGuard VPC"
+  value       = aws_vpc.main.id
+}
+
+output "public_subnet_ids" {
+  description = "IDs of the public subnets used by DeployGuard"
+  value = [
+    aws_subnet.public_a.id,
+    aws_subnet.public_b.id,
+  ]
+}

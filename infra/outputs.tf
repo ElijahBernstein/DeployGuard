@@ -15,3 +15,8 @@ output "public_subnet_ids" {
     aws_subnet.public_b.id,
   ]
 }
+
+output "application_url" {
+  description = "Public URL of the DeployGuard application"
+  value       = "http://${aws_lb.app.dns_name}"
+}

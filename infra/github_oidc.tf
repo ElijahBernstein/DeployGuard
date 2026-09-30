@@ -33,7 +33,7 @@ data "aws_iam_policy_document" "github_actions_trust" {
 }
 
 resource "aws_iam_role" "github_actions" {
-  name = "deployguard-github-actions"
+  name = "deployguard-deployer"
 
   assume_role_policy = data.aws_iam_policy_document.github_actions_trust.json
 }

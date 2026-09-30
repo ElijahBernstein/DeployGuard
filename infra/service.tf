@@ -11,6 +11,12 @@ resource "aws_ecs_service" "app" {
   deployment_minimum_healthy_percent = 100
   deployment_maximum_percent         = 200
 
+  lifecycle {
+    ignore_changes = [
+      task_definition
+    ]
+  }
+
   deployment_circuit_breaker {
     enable   = true
     rollback = true

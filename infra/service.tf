@@ -1,9 +1,9 @@
 resource "aws_ecs_service" "app" {
-  name            = "deployguard-${var.environment}"
-  cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
+  name             = "deployguard-${var.environment}"
+  cluster          = aws_ecs_cluster.main.id
+  task_definition  = aws_ecs_task_definition.app.arn
+  desired_count    = 1
+  launch_type      = "FARGATE"
   platform_version = "LATEST"
 
   health_check_grace_period_seconds = 60

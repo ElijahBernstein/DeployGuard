@@ -20,3 +20,8 @@ output "application_url" {
   description = "Public URL of the DeployGuard application"
   value       = "http://${aws_lb.app.dns_name}"
 }
+
+output "github_actions_role_arn" {
+  description = "IAM role assumed by GitHub Actions during deployments"
+  value       = aws_iam_role.github_actions.arn
+}

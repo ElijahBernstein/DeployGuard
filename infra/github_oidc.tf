@@ -27,7 +27,7 @@ data "aws_iam_policy_document" "github_actions_trust" {
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
-      values = ["repo:ElijahBernstein@183247497/DeployGuard@1380611450:ref:refs/heads/main"]
+      values   = ["repo:ElijahBernstein@183247497/DeployGuard@1380611450:ref:refs/heads/main"]
     }
   }
 }

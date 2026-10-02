@@ -125,3 +125,22 @@ resource "aws_iam_role_policy" "github_actions_ecs" {
 
   policy = data.aws_iam_policy_document.github_actions_ecs.json
 }
+
+data "aws_iam_policy_document" "github_actions_alb" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "elasticloadbalancing:DescribeLoadBalancers"
+    ]
+
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_role_policy" "github_actions_alb" {
+  name = "deployguard-alb-read"
+  role = aws_iam_role.github_actions.id
+
+  policy = data.aws_iam_policy_document.github_actions_alb.json
+}

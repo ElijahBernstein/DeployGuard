@@ -28,7 +28,8 @@ resource "aws_cloudwatch_metric_alarm" "unhealthy_target" {
 
   statistic           = "Maximum"
   period              = 60
-  evaluation_periods  = 2
+  evaluation_periods  = 3
+  datapoints_to_alarm = 1
   threshold           = 1
   comparison_operator = "GreaterThanOrEqualToThreshold"
 

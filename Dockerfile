@@ -7,7 +7,12 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN python -m pip install --no-cache-dir -r requirements.txt
+RUN apt-get update \
+    && apt-get upgrade --yes \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python -m pip install --no-cache-dir -r requirements.txt \
+    && python -m pip uninstall --yes setuptools wheel
 
 COPY app ./app
 

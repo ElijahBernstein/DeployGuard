@@ -28,6 +28,7 @@ env:
   ECS_SERVICE: deployguard-dev
   ECS_TASK_DEFINITION: deployguard-dev
   CONTAINER_NAME: deployguard
+  ALB_NAME: deployguard-dev-alb
 
 jobs:
   deploy:
@@ -84,3 +85,36 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
+
+      - name: Validate deployed application
+        env:
+          EXPECTED_VERSION: ${{ github.sha }}
+        run: |
+          ALB_DNS=$(aws elbv2 describe-load-balancers \
+            --names "$ALB_NAME" \
+            --query "LoadBalancers[0].DNSName" \
+            --output text)
+
+          APP_URL="http://$ALB_DNS"
+
+          HEALTH_STATUS=$(curl --fail --silent --show-error \
+            "$APP_URL/health" | jq -r ".status")
+
+          if [ "$HEALTH_STATUS" != "healthy" ]; then
+            echo "Health validation failed: expected healthy, received $HEALTH_STATUS"
+            exit 1
+          fi
+
+          DEPLOYED_VERSION=$(curl --fail --silent --show-error \
+            "$APP_URL/version" | jq -r ".version")
+
+          if [ "$DEPLOYED_VERSION" != "$EXPECTED_VERSION" ]; then
+            echo "Version validation failed"
+            echo "Expected: $EXPECTED_VERSION"
+            echo "Received: $DEPLOYED_VERSION"
+            exit 1
+          fi
+
+          echo "Deployment validation passed"
+          echo "Health: $HEALTH_STATUS"
+          echo "Version: $DEPLOYED_VERSION"

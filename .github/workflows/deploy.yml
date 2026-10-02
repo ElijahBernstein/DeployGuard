@@ -5,6 +5,14 @@ on:
     branches:
       - main
 
+  workflow_dispatch:
+    inputs:
+      force_unhealthy:
+        description: "Deploy an intentionally unhealthy version"
+        required: true
+        type: boolean
+        default: false
+
 permissions:
   id-token: write
   contents: read
@@ -44,7 +52,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: ${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           IMAGE_URI="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           docker build -t "$IMAGE_URI" .
@@ -67,6 +75,7 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
           environment-variables: |
             APP_VERSION=${{ github.sha }}
+            FORCE_UNHEALTHY=${{ inputs.force_unhealthy || 'false' }}
 
       - name: Deploy task definition to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
